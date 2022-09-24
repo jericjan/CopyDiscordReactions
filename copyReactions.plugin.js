@@ -14,7 +14,8 @@ module.exports = class Example {
 
     var list = []
     var reactMenuCount = 0
-
+	var scrollerSelector = "div.scroller-2GkvCq.thin-31rlnD.scrollerBase-_bVAAt.fade-1R6FHN"
+	var reactorsSelector = "div.reactors-1VXca7.thin-31rlnD.scrollerBase-_bVAAt.fade-1R6FHN"
     function copyToClipboard(text) {
       var dummy = document.createElement("textarea");
       document.body.appendChild(dummy);
@@ -28,13 +29,13 @@ module.exports = class Example {
     function onButtonClick() {
 
       list = []
-      let children = document.querySelector("#app-mount > div:nth-child(7) > div.layer-1Ixpg3 > div > div > div.reactors-1VXca7.thin-31rlnD.scrollerBase-_bVAAt.fade-1R6FHN > div").children
+      let children = document.querySelector(`${reactorsSelector} > div`).children
 
 
       function atTop() {
         console.log("atTop start")
-        var elem = document.querySelector("#app-mount > div:nth-child(7) > div.layer-1Ixpg3 > div > div > div.reactors-1VXca7.thin-31rlnD.scrollerBase-_bVAAt.fade-1R6FHN")
-        var children = document.querySelector("#app-mount > div:nth-child(7) > div.layer-1Ixpg3 > div > div > div.reactors-1VXca7.thin-31rlnD.scrollerBase-_bVAAt.fade-1R6FHN > div").children
+        var elem = document.querySelector(reactorsSelector)
+        var children = document.querySelector(`${reactorsSelector} > div`).children
         if (elem.scrollTop == 0) {
           console.log("at the top")
           next(list);
@@ -87,7 +88,7 @@ module.exports = class Example {
               }
               //console.log("[2] added nodes:")
               //console.log(mutations[i].addedNodes[0])
-              if (document.querySelector("#app-mount > div:nth-child(7) > div.layer-1Ixpg3 > div > div > div.reactors-1VXca7.thin-31rlnD.scrollerBase-_bVAAt.fade-1R6FHN > div > span") != null) {
+              if (document.querySelector(`${reactorsSelector} > div > span`) != null) {
                 console.log("spinner")
               } else {
                 let name = mutations[i].addedNodes[0].querySelector("strong > div > span.username-3JLfHz.username-tJjT82").innerHTML
@@ -114,7 +115,7 @@ module.exports = class Example {
 
         });
 
-        mutationObserver.observe(document.querySelector("#app-mount > div:nth-child(7) > div.layer-1Ixpg3 > div > div > div.reactors-1VXca7.thin-31rlnD.scrollerBase-_bVAAt.fade-1R6FHN > div"), {
+        mutationObserver.observe(document.querySelector(`${reactorsSelector} > div`), {
 
           childList: true
         });
@@ -122,13 +123,13 @@ module.exports = class Example {
 
         function isEnd() {
           console.log("isEnd start")
-          var elem = document.querySelector("#app-mount > div:nth-child(7) > div.layer-1Ixpg3 > div > div > div.reactors-1VXca7.thin-31rlnD.scrollerBase-_bVAAt.fade-1R6FHN")
+          var elem = document.querySelector(reactorsSelector)
           if (elem.scrollHeight - elem.scrollTop === elem.clientHeight) {
-            if (document.querySelector("#app-mount > div:nth-child(7) > div.layer-1Ixpg3 > div > div > div.reactors-1VXca7.thin-31rlnD.scrollerBase-_bVAAt.fade-1R6FHN > div > span") == null) {
+            if (document.querySelector(`${reactorsSelector} > div > span`) == null) {
               console.log("end")
               console.log(list.join(" "))
               console.log(`length: ${list.length}`)
-              reactMenuCount = document.querySelector("#app-mount > div:nth-child(7) > div.layer-1Ixpg3 > div > div > div.scroller-2GkvCq.thin-31rlnD.scrollerBase-_bVAAt.fade-1R6FHN > div.reactionSelected-1aMb2K > .colorStandard-21JIj7").innerHTML
+              reactMenuCount = document.querySelector(`${scrollerSelector} > div.reactionSelected-1aMb2K > div.text-sm-normal-3Zj3Iv`).innerHTML
               if (parseInt(reactMenuCount) == list.length) {
                 console.log(`MATCH!`)
               }
@@ -164,7 +165,7 @@ module.exports = class Example {
 
 
     function copyReactions() {
-	  let sidebar = document.querySelector("#app-mount > div:nth-child(7) > div.layer-1Ixpg3 > div > div > div.scroller-2GkvCq.thin-31rlnD.scrollerBase-_bVAAt.fade-1R6FHN")
+	  let sidebar = document.querySelector(scrollerSelector)
       if (sidebar != null) { //if reaction sidebar exists
         let btn = document.createElement("button");
         if (document.querySelector("#copyReactsbtn") == null) { //if no button yet
