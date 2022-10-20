@@ -65,6 +65,7 @@ module.exports = class Example {
               let name = children[i].querySelector("strong > div > span.username-3JLfHz.username-tJjT82").innerHTML
               let discriminator = children[i].querySelector("strong > div > span.discriminator-1DCM-o").innerHTML
               list.push(`@${name}${discriminator}`)
+			  console.log(`Added ${name}${discriminator}`)
             }
           }
         }
@@ -94,6 +95,7 @@ module.exports = class Example {
                 let name = mutations[i].addedNodes[0].querySelector("strong > div > span.username-3JLfHz.username-tJjT82").innerHTML
                 let discriminator = mutations[i].addedNodes[0].querySelector("strong > div > span.discriminator-1DCM-o").innerHTML
                 list.push(`@${name}${discriminator}`)
+				console.log(`Added ${name}${discriminator}`)
               }
 
             }
@@ -110,17 +112,26 @@ module.exports = class Example {
               console.log("end?")
               console.log(list.join(" "))
               console.log(`length: ${list.length}`)
+			  
             }
           }
-
+          var elem = document.querySelector(reactorsSelector)
+          if (elem.scrollHeight - elem.scrollTop === elem.clientHeight) {
+			  isEnd();
+		  }
         });
 
         mutationObserver.observe(document.querySelector(`${reactorsSelector} > div`), {
 
           childList: true
         });
-        children[children.length - 1].scrollIntoView();
-
+		
+		let lastChild = children[children.length - 1]
+		let name = lastChild.querySelector("strong > div > span.username-3JLfHz.username-tJjT82").innerHTML
+		let discriminator = lastChild.querySelector("strong > div > span.discriminator-1DCM-o").innerHTML		
+        lastChild.scrollIntoView();
+		console.log(`Scrolled to ${name}${discriminator}`)
+		
         function isEnd() {
           console.log("isEnd start")
           var elem = document.querySelector(reactorsSelector)
@@ -146,7 +157,7 @@ module.exports = class Example {
           }
         }
 
-        isEnd();
+        
       }
 
       function final(reactMenuCount, found, list) {
