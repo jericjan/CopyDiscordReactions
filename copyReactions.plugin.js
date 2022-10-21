@@ -62,10 +62,17 @@ module.exports = class Example {
             if (children[i].querySelector("span.spinner-2RT7ZC") != null) {
               console.log("spinner")
             } else {
+			  let pfpUrl = children[i].querySelector("div > div > svg > foreignObject > div > img").src.split('/')
+			  let pfpType = pfpUrl[3]
+			  if (pfpType == "avatars") {
+				var pingerTxt = `<@${pfpUrl[4]}>`
+			  } else {			  
               let name = children[i].querySelector("strong > div > span.username-3JLfHz.username-tJjT82").innerHTML
               let discriminator = children[i].querySelector("strong > div > span.discriminator-1DCM-o").innerHTML
-              list.push(`@${name}${discriminator}`)
-			  console.log(`Added ${name}${discriminator}`)
+			  var pingerTxt = `@${name}${discriminator}`
+			  }
+              list.push(pingerTxt)
+			  console.log(`Added ${pingerTxt}`)
             }
           }
         }
@@ -92,10 +99,18 @@ module.exports = class Example {
               if (document.querySelector(`${reactorsSelector} > div > span`) != null) {
                 console.log("spinner")
               } else {
-                let name = mutations[i].addedNodes[0].querySelector("strong > div > span.username-3JLfHz.username-tJjT82").innerHTML
-                let discriminator = mutations[i].addedNodes[0].querySelector("strong > div > span.discriminator-1DCM-o").innerHTML
-                list.push(`@${name}${discriminator}`)
-				console.log(`Added ${name}${discriminator}`)
+				  let pfpUrl = mutations[i].addedNodes[0].querySelector("div > div > svg > foreignObject > div > img").src.split('/')
+				  let pfpType = pfpUrl[3]
+				  if (pfpType == "avatars") {
+					var pingerTxt = `<@${pfpUrl[4]}>`
+				  } else {			  
+			  
+					let name = mutations[i].addedNodes[0].querySelector("strong > div > span.username-3JLfHz.username-tJjT82").innerHTML
+					let discriminator = mutations[i].addedNodes[0].querySelector("strong > div > span.discriminator-1DCM-o").innerHTML
+					var pingerTxt = `@${name}${discriminator}`
+				  }
+				list.push(pingerTxt)
+				console.log(`Added ${pingerTxt}`)
               }
 
             }
@@ -118,6 +133,8 @@ module.exports = class Example {
           var elem = document.querySelector(reactorsSelector)
           if (elem.scrollHeight - elem.scrollTop === elem.clientHeight) {
 			  isEnd();
+		  } else {
+			console.log(`scroll height: ${elem.scrollHeight - elem.scrollTop} max height: {elem.clientHeight}`)
 		  }
         });
 
@@ -125,6 +142,13 @@ module.exports = class Example {
 
           childList: true
         });
+		
+		  var elem = document.querySelector(reactorsSelector)
+		  if (elem.scrollHeight - elem.scrollTop === elem.clientHeight) {
+			  isEnd();
+		  }		else {
+			console.log(`scroll height: ${elem.scrollHeight - elem.scrollTop} max height: {elem.clientHeight}`)
+		  }
 		
 		let lastChild = children[children.length - 1]
 		let name = lastChild.querySelector("strong > div > span.username-3JLfHz.username-tJjT82").innerHTML
