@@ -9,9 +9,11 @@
 
 module.exports = (meta) => {
   let running = true;
+  let observer;
   // Do stuff in here before returning
   return {
     start: () => {
+      let currentMsgId;
       var list = [];
       var reactMenuCount = 0;
       var scrollerSelector =
@@ -27,6 +29,7 @@ module.exports = (meta) => {
       }
 
       function onButtonClick() {
+        console.log(`Current id is ${currentMsgId}`);
         var scrollerSelector =
           "[class^=scroller]:has(+[class*=reactorsContainer])";
         var reactName = document.querySelector(
@@ -44,13 +47,13 @@ module.exports = (meta) => {
           const storedEmoteName = key.split(":")[1];
           if (storedEmoteName == reactName) {
             if (value.fetched == true && userCount != 0) {
-              console.log(key)
-              console.log(value)
+              console.log(key);
+              console.log(value);
               const userList = Object.keys(value.users);
-              const foundCount = userList.length
+              const foundCount = userList.length;
               if (foundCount == reactMenuCount) {
                 //match
-                copyToClipboard(userList.join(" "));                
+                copyToClipboard(userList.join(" "));
                 BdApi.alert(
                   "Copied to clipboard!",
                   `There are: ${reactMenuCount} reactions. Found: ${foundCount}.`
@@ -61,10 +64,64 @@ module.exports = (meta) => {
                   `There are: ${reactMenuCount} reactions. Found: ${foundCount}.`
                 );
               }
-
             }
           }
         }
+
+        // OBSERVER PART
+
+        function NestedParent(element, selector) {
+          return element.closest(selector);
+        }
+
+        // Callback function to handle the mutations
+        function handleMutations(mutations) {          
+          mutations.forEach(function (mutation) {
+            mutation.addedNodes.forEach(function (node) {
+              if (node.matches && node.matches("[class^=chatContent]")) {
+                onRightClick(node);
+              } else {
+                //console.log("Ignored right click")
+              }
+            });
+          });
+        }
+
+        function onRightClick(node) {          
+          console.log('Adding right click listener. context:', this)
+          // The element with the selector '[class^=chatContent]' has been added
+          console.log(
+            "Element with selector '[class^=chatContent]' added:",
+            node
+          );
+          node.addEventListener("contextmenu", function (event) {
+            
+            var targetElement = event.target;
+            var parentElement = NestedParent(
+              targetElement,
+              "[id^=chat-messages]"
+            );
+            if (parentElement != null) {
+              var parentElemParts = parentElement.id.split("-");
+              var msgId = parentElemParts[parentElemParts.length - 1];
+              currentMsgId = msgId;
+              console.log("Right clicked! Id is ", msgId);
+            }
+          });
+        }
+
+        // Create a new mutation observer
+        observer = new MutationObserver(handleMutations);
+
+        var chatContentSelector = document.querySelector(
+          "[class^=chatContent]"
+        );
+        if (chatContentSelector != null) {
+          onRightClick(chatContentSelector);
+        }
+
+        // Start observing the document body for mutations
+        observer.observe(document.body, { childList: true, subtree: true });
 
         // list = [];
         // let children = document.querySelector(
@@ -322,6 +379,7 @@ module.exports = (meta) => {
     },
     stop: () => {
       running = false;
+      observer.disconnect();
     },
   };
 };
