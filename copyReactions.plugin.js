@@ -7,14 +7,15 @@
  */
 // var running = true;
 
-module.exports = meta => {
+module.exports = (meta) => {
   let running = true;
   // Do stuff in here before returning
   return {
     start: () => {
       var list = [];
       var reactMenuCount = 0;
-      var scrollerSelector = "[class^=scroller]:has(+[class*=reactorsContainer])";
+      var scrollerSelector =
+        "[class^=scroller]:has(+[class*=reactorsContainer])";
       var reactorsSelector = "[class*=reactorsContainer] > div";
       function copyToClipboard(text) {
         var dummy = document.createElement("textarea");
@@ -24,13 +25,13 @@ module.exports = meta => {
         document.execCommand("copy");
         document.body.removeChild(dummy);
       }
-  
+
       function onButtonClick() {
         list = [];
         let children = document.querySelector(
           `${reactorsSelector} > div`
         ).children;
-  
+
         function atTop() {
           console.log("atTop start");
           var elem = document.querySelector(reactorsSelector);
@@ -46,12 +47,12 @@ module.exports = meta => {
             setTimeout(atTop, 1000);
           }
         }
-  
+
         atTop();
-  
+
         function next(list) {
           console.log("aaaaa");
-  
+
           console.log("starting thing");
           for (let i = 0; i < children.length; i++) {
             if (children[i].children.length != 0) {
@@ -74,17 +75,18 @@ module.exports = meta => {
                 if (pfpType == "avatars") {
                   var pingerTxt = `<@${pfpUrl[4]}>`;
                 } else {
+                  console.log("No pfp");
+                  console.log(children[i]);
                   let name = children[i].querySelector(
                     "strong > div > span[class*=username]"
                   ).innerHTML;
-  
+
                   let discriminator = "";
-                  if (
-                    children[i].querySelector(
-                      "strong > div > span[class*=discriminator]"
-                    ) != null
-                  ) {
-                    discriminator = discriminator.innerHTML;
+                  var selector = children[i].querySelector(
+                    "strong > div > span[class*=discriminator]"
+                  );
+                  if (selector != null) {
+                    discriminator = selector.innerHTML;
                   }
                   var pingerTxt = `@${name}${discriminator}`;
                 }
@@ -93,10 +95,10 @@ module.exports = meta => {
               }
             }
           }
-  
+
           console.log("starting thing2");
           var lastElem = null;
-  
+
           var mutationObserver = new MutationObserver(function (mutations) {
             /*creates observer*/
             console.log("Mutation!");
@@ -104,7 +106,7 @@ module.exports = meta => {
               if (mutations[i].addedNodes.length != 0) {
                 // console.log('Mutation found:')
                 // console.log(mutations[i].addedNodes[0])
-  
+
                 while (
                   typeof mutations[i].addedNodes[0].querySelector(
                     "strong > div > span[class*=username]"
@@ -121,22 +123,30 @@ module.exports = meta => {
                   console.log("spinner");
                 } else {
                   let pfpUrl = mutations[i].addedNodes[0]
-                    .querySelector("div > div > svg > foreignObject > div > img")
+                    .querySelector(
+                      "div > div > svg > foreignObject > div > img"
+                    )
                     .src.split("/");
                   let pfpType = pfpUrl[3];
                   if (pfpType == "avatars") {
                     var pingerTxt = `<@${pfpUrl[4]}>`;
                   } else {
+                    console.log("No pfp");
+                    console.log(mutations[i]);
+                    console.log(
+                      mutations[i].addedNodes[0].querySelector(
+                        "strong > div > span[class*=discriminator]"
+                      )
+                    );
                     let name = mutations[i].addedNodes[0].querySelector(
                       "strong > div > span[class*=username]"
                     ).innerHTML;
                     let discriminator = "";
-                    if (
-                      mutations[i].addedNodes[0].querySelector(
-                        "strong > div > span[class*=discriminator]"
-                      ) != null
-                    ) {
-                      discriminator = discriminator.innerHTML;
+                    var selector = mutations[i].addedNodes[0].querySelector(
+                      "strong > div > span[class*=discriminator]"
+                    );
+                    if (selector != null) {
+                      discriminator = selector.innerHTML;
                     }
                     var pingerTxt = `@${name}${discriminator}`;
                   }
@@ -145,7 +155,7 @@ module.exports = meta => {
                 }
               }
             }
-  
+
             if (mutations[mutations.length - 1].addedNodes[0] != lastElem) {
               if (mutations[mutations.length - 1].addedNodes.length != 0) {
                 var lastElem = mutations[mutations.length - 1].addedNodes[0];
@@ -168,36 +178,35 @@ module.exports = meta => {
               );
             }
           });
-  
+
           mutationObserver.observe(
             document.querySelector(`${reactorsSelector} > div`),
             {
               childList: true,
             }
           );
-  
+
           var elem = document.querySelector(reactorsSelector);
           if (elem.scrollHeight - elem.scrollTop === elem.clientHeight) {
             isEnd();
           } else {
             console.log(
-              `scroll height: ${elem.scrollHeight - elem.scrollTop} max height: ${
-                elem.clientHeight
-              }`
+              `scroll height: ${
+                elem.scrollHeight - elem.scrollTop
+              } max height: ${elem.clientHeight}`
             );
           }
-  
+
           let lastChild = children[children.length - 1];
           let name = lastChild.querySelector(
             "strong > div > span[class*=username]"
           ).innerHTML;
           let discriminator = "";
-          if (
-            lastChild.querySelector(
-              "strong > div > span[class*=discriminator]"
-            ) != null
-          ) {
-            discriminator = discriminator.innerHTML;
+          var selector = lastChild.querySelector(
+            "strong > div > span[class*=discriminator]"
+          );
+          if (selector != null) {
+            discriminator = selector.innerHTML;
           }
           lastChild.scrollIntoView();
           console.log(`Scrolled to ${name}${discriminator}`);
@@ -207,7 +216,8 @@ module.exports = meta => {
             var elem = document.querySelector(reactorsSelector);
             if (elem.scrollHeight - elem.scrollTop === elem.clientHeight) {
               if (
-                document.querySelector(`${reactorsSelector} > div > span`) == null
+                document.querySelector(`${reactorsSelector} > div > span`) ==
+                null
               ) {
                 console.log("end");
                 console.log(list.join(" "));
@@ -230,7 +240,7 @@ module.exports = meta => {
             }
           }
         }
-  
+
         function final(reactMenuCount, found, list) {
           copyToClipboard(list.join(" "));
           var success_msg = "";
@@ -245,7 +255,7 @@ module.exports = meta => {
           );
         }
       }
-  
+
       function copyReactions() {
         let sidebar = document.querySelector(scrollerSelector);
         if (sidebar != null) {
@@ -262,19 +272,17 @@ module.exports = meta => {
           }
         }
         // console.log(`copyReactions is running: ${running}`)
-        if ((running == true)) {
+        if (running == true) {
           setTimeout(copyReactions, 1000);
-          
         } else {
           running = true;
         }
       }
-  
+
       copyReactions();
     },
     stop: () => {
       running = false;
-    }
-  }
+    },
+  };
 };
-
